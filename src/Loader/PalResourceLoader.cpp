@@ -19,22 +19,24 @@ namespace Palworld {
     {
     }
 
-    void PalResourceLoader::OnAutoReload(const RC::StringType& modName, const std::filesystem::path& modFilePath)
+    void PalResourceLoader::OnLoad(const std::filesystem::path& loaderPath, const RC::StringType& modName, const EEngineLifecyclePhase& engineLifecyclePhase)
     {
         if (engineLifecyclePhase != EEngineLifecyclePhase::GameInstanceInit)
         {
             return;
         }
 
-        UnregisterResourceAssets(modName);
+        auto nativeModName = RC::to_utf8_string(modName);
+        UnregisterResourceAssets(nativeModName);
 
-        LoadImages(modName, loaderPath);
+        LoadImages(nativeModName, loaderPath);
     }
 
-    void PalResourceLoader::OnAutoReload(const std::filesystem::path::string_type& modName, const std::filesystem::path& modFilePath)
+    void PalResourceLoader::OnAutoReload(const RC::StringType& modName, const std::filesystem::path& modFilePath)
     {
-        UnregisterResourceAssetByFilePath(modName, modFilePath);
-        LoadImage(modName, modFilePath);
+        auto nativeModName = RC::to_utf8_string(modName);
+        UnregisterResourceAssetByFilePath(nativeModName, modFilePath);
+        LoadImage(nativeModName, modFilePath);
     }
 
     bool PalResourceLoader::CanInitialize(const EEngineLifecyclePhase& engineLifecyclePhase)
@@ -85,7 +87,7 @@ namespace Palworld {
             return;
         }
 
-        auto fileName = modFilePath.stem().native();
+        auto fileName = RC::to_generic_string(modFilePath.stem());
 
         auto& loadedResources = loadedResourcesIt->second;
         std::erase_if(loadedResources, [&](RC::Unreal::UObject* loadedResource) {
@@ -174,7 +176,7 @@ namespace Palworld {
 
         auto imageName = imagePath.stem().native();
 
-        auto newTexture = UECustom::UKismetRenderingLibrary::ImportFileAsTexture2D(nullptr, FString(imagePath.c_str()));
+        auto newTexture = UECustom::UKismetRenderingLibrary::ImportFileAsTexture2D(nullptr, FString(RC::to_generic_string(imagePath)));
         newTexture->SetRootSet();
 
         auto packagePath = RC::to_generic_string(std::format("PalSchema/Resources/{}/{}", modName, imageName));
