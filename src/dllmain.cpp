@@ -56,6 +56,7 @@ public:
         return fs::exists(MemberVariableLayoutFile);
     }
 
+#ifdef UE4SS_HAS_GUI
     auto render_schema_generator()
     {
         static bool bGeneratingSchemas = false;
@@ -94,6 +95,7 @@ public:
 
         PS::Log<LogLevel::Verbose>(STR("Finished registering Pal Schema tab for GUI Console.\n"));
     }
+#endif
 
     auto on_update() -> void override
     {
@@ -112,7 +114,11 @@ private:
 };
 
 
+#ifdef _WIN32
 #define PALSCHEMA_API __declspec(dllexport)
+#else
+#define PALSCHEMA_API __attribute__((visibility("default")))
+#endif
 extern "C"
 {
     PALSCHEMA_API RC::CppUserModBase* start_mod()
