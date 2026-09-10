@@ -80,12 +80,12 @@ namespace Palworld {
 
         // Skip PalSchema and mods folder
         std::advance(it, 2);
-        auto modName = it->native();
+        auto modName = RC::to_generic_string(it->native());
 
         // Move to folder type, e.g. buildings
         std::advance(it, 1);
         auto folderType = it->string();
-
+		
         std::ifstream f(filePath);
         if (f.peek() == std::ifstream::traits_type::eof()) {
             return;
@@ -121,7 +121,7 @@ namespace Palworld {
                 if (entry.is_directory())
                 {
                     auto& path = entry.path();
-                    auto folderName = path.stem().native();
+                    auto folderName = RC::to_generic_string(path.stem().native());
                     callback(entry.path(), folderName);
                 }
             }
@@ -293,7 +293,7 @@ namespace Palworld {
 
     void PalMainLoader::LoadMods(EEngineLifecyclePhase engineLifecyclePhase)
     {
-        IterateModsFolder([&](const fs::path& modPath, const fs::path::string_type& modName)
+        IterateModsFolder([&](const fs::path& modPath, const RC::StringType& modName)
         {
             try
             {
@@ -340,7 +340,7 @@ namespace Palworld {
         PS::Log<LogLevel::Verbose>(STR("Preparing to add extra .pak read directory...\n"));
         auto ModsFolderPath = GetModsPath();
         auto AbsolutePath = ModsFolderPath.native();
-        auto AbsolutePathWithSuffix = std::format(STR("{}/"), RC::to_generic_string(AbsolutePath));
+        auto AbsolutePathWithSuffix = RC::to_generic_string(AbsolutePath) + STR("/");
 
         PS::Log<LogLevel::Verbose>(STR("Setting extra .pak read directory to {}\n"), AbsolutePathWithSuffix);
 

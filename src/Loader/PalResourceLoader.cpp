@@ -19,7 +19,7 @@ namespace Palworld {
     {
     }
 
-    void PalResourceLoader::OnLoad(const std::filesystem::path& loaderPath, const RC::StringType& modName, const EEngineLifecyclePhase& engineLifecyclePhase)
+    void PalResourceLoader::OnAutoReload(const RC::StringType& modName, const std::filesystem::path& modFilePath)
     {
         if (engineLifecyclePhase != EEngineLifecyclePhase::GameInstanceInit)
         {
@@ -72,7 +72,7 @@ namespace Palworld {
     {
         // We have to rename here, because CollectGarbage happens at the end of a frame and from testing, it happens after we add a new resource -
         // which isn't quick enough. You're not allowed to rename an asset to something that already exists, otherwise UE will crash.
-        auto tempName = std::format(TEXT("{}-Temp"), resource->GetFullName());
+        auto tempName = resource->GetFullName() + TEXT("-Temp");
         resource->Rename(tempName.c_str());
         resource->ClearRootSet();
     }
@@ -177,7 +177,7 @@ namespace Palworld {
         auto newTexture = UECustom::UKismetRenderingLibrary::ImportFileAsTexture2D(nullptr, FString(imagePath.c_str()));
         newTexture->SetRootSet();
 
-        auto packagePath = std::format(TEXT("PalSchema/Resources/{}/{}"), modName, imageName);
+        auto packagePath = RC::to_generic_string(std::format("PalSchema/Resources/{}/{}", modName, imageName));
         newTexture->Rename(packagePath.c_str()); // becomes "/Engine/Transient.PalSchema/Resources/modname/resourcename"
 
         RegisterResourceAsset(modName, newTexture);

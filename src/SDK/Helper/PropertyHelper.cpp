@@ -341,7 +341,7 @@ namespace Palworld {
             SoftObjectPath = SoftObjectPath.erase(0, resourcePrefix.length());
 
             // "/Engine/Transient.PalSchema/Resources/modname/resourcename"
-            SoftObjectPath = std::format(TEXT("/Engine/Transient.PalSchema/Resources/{}"), SoftObjectPath);
+            SoftObjectPath = RC::StringType(TEXT("/Engine/Transient.PalSchema/Resources/")) + SoftObjectPath;
         }
 
         auto SoftObjectPtr = RC::Unreal::FSoftObjectPtr(RC::Unreal::FSoftObjectPath(FString(SoftObjectPath)));

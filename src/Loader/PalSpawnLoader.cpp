@@ -57,7 +57,7 @@ namespace Palworld {
         });
     }
 
-    void PalSpawnLoader::OnAutoReload(const std::filesystem::path::string_type& modName, const std::filesystem::path& modFilePath)
+    void PalSpawnLoader::OnAutoReload(const RC::StringType& modName, const std::filesystem::path& modFilePath)
     {
         PS::JsonHelpers::ParseJsonFileInPath(modFilePath, [&](const nlohmann::json& data) {
             Reload(modName, data);
@@ -230,7 +230,7 @@ namespace Palworld {
             PS::JsonHelpers::ParseString(value, "SpawnerName", spawnerName);
 
             auto spawnerNameWide = RC::to_generic_string(spawnerName);
-            spawnerNameWide = std::format(TEXT("{}_{}"), spawnerInfo.ModName, spawnerNameWide);
+            spawnerNameWide = spawnerInfo.ModName + TEXT("_") + spawnerNameWide;
 
             spawnerInfo.SpawnerName = FName(spawnerNameWide, FNAME_Add);
         }

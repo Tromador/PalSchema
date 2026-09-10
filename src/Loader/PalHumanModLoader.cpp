@@ -260,28 +260,28 @@ namespace Palworld {
 				continue;
 			}
 
-			auto ItemIdWithSuffix = std::format(STR("ItemId{}"), Index);
+			auto ItemIdWithSuffix = RC::to_generic_string(std::format("ItemId{}", Index));
 			auto ItemIdProperty = RowStruct->GetPropertyByName(ItemIdWithSuffix.c_str());
 			if (!ItemIdProperty)
 			{
 				throw std::runtime_error(std::format("Property 'ItemId{}' doesn't exist in DT_PalDropItem, Pal Schema needs an update.", Index));
 			}
 
-			auto RateWithSuffix = std::format(STR("Rate{}"), Index);
+			auto RateWithSuffix = RC::to_generic_string(std::format("Rate{}", Index));
 			auto RateProperty = RowStruct->GetPropertyByName(RateWithSuffix.c_str());
 			if (!RateProperty)
 			{
 				throw std::runtime_error(std::format("Property 'Rate{}' doesn't exist in DT_PalDropItem, Pal Schema needs an update.", Index));
 			}
 
-			auto MaxWithSuffix = std::format(STR("Max{}"), Index);
+			auto MaxWithSuffix = RC::to_generic_string(std::format("Max{}", Index));
 			auto MaxProperty = RowStruct->GetPropertyByName(MaxWithSuffix.c_str());
 			if (!MaxProperty)
 			{
 				throw std::runtime_error(std::format("Property 'Max{}' doesn't exist in DT_PalDropItem, Pal Schema needs an update.", Index));
 			}
 
-			auto MinWithSuffix = std::format(STR("min{}"), Index);
+			auto MinWithSuffix = RC::to_generic_string(std::format("min{}", Index));
 			auto MinProperty = RowStruct->GetPropertyByName(MinWithSuffix.c_str());
 			if (!MinProperty)
 			{
@@ -306,7 +306,7 @@ namespace Palworld {
 			}
 		}
 
-		auto RowName = std::format(STR("{}000"), CharacterId.ToString());
+		auto RowName = CharacterId.ToString() + STR("000");
 		m_dropItemTable->AddRow(FName(RowName, FNAME_Add), *reinterpret_cast<RC::Unreal::FTableRowBase*>(NpcDropItemData.GetData()));
 	}
 
@@ -315,7 +315,7 @@ namespace Palworld {
 	{
 		if (Data.contains("Name"))
 		{
-			auto FixedCharacterId = std::format(STR("HUMAN_NAME_{}"), CharacterId.ToString());
+			auto FixedCharacterId = RC::StringType(STR("HUMAN_NAME_")) + CharacterId.ToString();
 			auto TranslationRowStruct = m_npcNameTable->GetRowStruct().Get();
 			auto TextProperty = TranslationRowStruct->GetPropertyByName(STR("TextData"));
 			if (TextProperty)
@@ -343,7 +343,7 @@ namespace Palworld {
 	{
 		if (Data.contains("Name"))
 		{
-			auto FixedCharacterId = std::format(STR("HUMAN_NAME_{}"), CharacterId.ToString());
+			auto FixedCharacterId = RC::StringType(STR("HUMAN_NAME_")) + CharacterId.ToString();
 			auto TranslationRowStruct = m_npcNameTable->GetRowStruct().Get();
 			auto TextProperty = TranslationRowStruct->GetPropertyByName(STR("TextData"));
 			if (TextProperty)

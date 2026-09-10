@@ -17,7 +17,7 @@ class PalSchema : public RC::CppUserModBase
 public:
     PalSchema() : CppUserModBase()
     {
-        auto Version = std::format(STR("{}.{}.{}"), VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION);
+        auto Version = RC::to_generic_string(std::format("{}.{}.{}", VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION));
 
         ModName = STR("PalSchema");
         ModVersion = Version;

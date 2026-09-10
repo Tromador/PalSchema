@@ -335,7 +335,7 @@ namespace Palworld {
 	{
 		if (Data.contains("Name"))
 		{
-			auto RowId = std::format(TEXT("ITEM_NAME_{}"), ItemId.ToString());
+			auto RowId = RC::StringType(TEXT("ITEM_NAME_")) + ItemId.ToString();
 			auto RowStruct = m_nameTranslationTable->GetRowStruct().Get();
 			auto TextDataProperty = RowStruct->GetPropertyByName(TEXT("TextData"));
             if (TextDataProperty)
@@ -359,7 +359,7 @@ namespace Palworld {
 
 		if (Data.contains("Description"))
 		{
-			auto RowId = std::format(TEXT("ITEM_DESC_{}"), ItemId.ToString());
+			auto RowId = RC::StringType(TEXT("ITEM_DESC_")) + ItemId.ToString();
             auto RowStruct = m_descriptionTranslationTable->GetRowStruct().Get();
             auto TextDataProperty = RowStruct->GetPropertyByName(TEXT("TextData"));
             if (TextDataProperty)
@@ -386,7 +386,7 @@ namespace Palworld {
 	{
 		if (Data.contains("Name"))
 		{
-			auto RowId = std::format(TEXT("ITEM_NAME_{}"), ItemId.ToString());
+			auto RowId = RC::StringType(TEXT("ITEM_NAME_")) + ItemId.ToString();
 			auto RowStruct = m_nameTranslationTable->GetRowStruct().Get();
 			auto TextDataProperty = RowStruct->GetPropertyByName(TEXT("TextData"));
 			if (TextDataProperty)
@@ -401,7 +401,7 @@ namespace Palworld {
 
 		if (Data.contains("Description"))
 		{
-			auto RowId = std::format(TEXT("ITEM_DESC_{}"), ItemId.ToString());
+			auto RowId = RC::StringType(TEXT("ITEM_DESC_")) + ItemId.ToString();
 			auto RowStruct = m_nameTranslationTable->GetRowStruct().Get();
 			auto TextDataProperty = RowStruct->GetPropertyByName(TEXT("TextData"));
 			if (TextDataProperty)
