@@ -1,3 +1,6 @@
+set(BUILD_SHARED_LIBS OFF)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 FetchContent_Declare(
     safetyhook
     GIT_REPOSITORY https://github.com/cursey/safetyhook.git
