@@ -1,4 +1,11 @@
 #include "SDK/PalSignatures.h"
+
+#ifdef __linux__
+#include "SDK/PalSignatures_Linux.h"
+#else
+#include "SDK/PalSignatures_Windows.h"
+#endif
+
 #include "Signatures.hpp"
 #include "SigScanner/SinglePassSigScanner.hpp"
 #include "Utility/Logging.h"
@@ -14,7 +21,7 @@ namespace Palworld {
         std::vector<SignatureContainer> SigContainerBox;
         SinglePassScanner::SignatureContainerMap SigContainerMap;
 
-        for (auto& [ClassAndName, Signature] : Signatures)
+        for (auto& [ClassAndName, Signature] : SignatureData::Signatures)
         {
             SignatureContainer SigContainer = [=]() -> SignatureContainer {
                 return {
@@ -40,7 +47,7 @@ namespace Palworld {
             SigContainerBox.emplace_back(SigContainer);
         }
 
-        for (auto& [ClassAndName, Signature] : SignaturesCallResolve)
+        for (auto& [ClassAndName, Signature] : SignatureData::SignaturesCallResolve)
         {
             SignatureContainer SigContainer = [=]() -> SignatureContainer {
                 return {
