@@ -1,0 +1,46 @@
+diff --git a/UE4SS/CMakeLists.txt b/UE4SS/CMakeLists.txt
+index b831163e..1b7f3da3 100644
+--- a/UE4SS/CMakeLists.txt
++++ b/UE4SS/CMakeLists.txt
+@@ -145,7 +145,8 @@ if(WIN32)
+ else()
+     target_link_libraries(UE4SS PUBLIC dl pthread)
+     target_link_options(UE4SS PRIVATE
+-        -static-libstdc++
++	-static-libstdc++
++	-Wl,--exclude-libs,libstdc++.a
+         -Wl,-Bsymbolic
+         -Wl,-Bgroup
+     )
+diff --git a/UE4SS/include/UE4SSProgram.hpp b/UE4SS/include/UE4SSProgram.hpp
+index f6a182e6..93db5292 100644
+--- a/UE4SS/include/UE4SSProgram.hpp
++++ b/UE4SS/include/UE4SSProgram.hpp
+@@ -374,10 +374,7 @@ namespace RC
+         RC_UE4SS_API static auto find_lua_mod_by_name(StringViewType mod_name, IsInstalled = IsInstalled::No, IsStarted = IsStarted::No) -> LuaMod*;
+         RC_UE4SS_API static auto find_lua_mod_by_name(std::string_view mod_name, IsInstalled = IsInstalled::No, IsStarted = IsStarted::No) -> LuaMod*;
+         static auto static_cleanup() -> void;
+-        RC_UE4SS_API static auto get_program() -> UE4SSProgram&
+-        {
+-            return *s_program;
+-        }
++        RC_UE4SS_API static auto get_program() -> UE4SSProgram&;
+         RC_UE4SS_API static auto parse_semicolon_separated_string(const StringType& string) -> std::vector<StringType>;
+ 
+       private:
+diff --git a/UE4SS/src/UE4SSProgram.cpp b/UE4SS/src/UE4SSProgram.cpp
+index 9bf0edbd..ca889238 100644
+--- a/UE4SS/src/UE4SSProgram.cpp
++++ b/UE4SS/src/UE4SSProgram.cpp
+@@ -2601,6 +2601,11 @@ namespace RC
+         // Including when the player hits the 'X' button to exit the game
+     }
+ 
++    auto UE4SSProgram::get_program() -> UE4SSProgram&
++    {
++        return *s_program;
++    }
++
+     auto UE4SSProgram::parse_semicolon_separated_string(const StringType& string) -> std::vector<StringType>
+     {
+         std::vector<StringType> strings{};

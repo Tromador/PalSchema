@@ -10,6 +10,31 @@ using namespace RC::Unreal;
 namespace UECustom {
     RC::Unreal::UObject* UClassWrapper::GetDefaultObject(bool bCreateIfNeeded)
     {
+#ifdef __linux__
+        auto* cdo = GetClassDefaultObject().Get();
+        if (cdo || !bCreateIfNeeded)
+        {
+            return cdo;
+        }
+
+        using FnSignature = RC::Unreal::UObject* (*)(UClass*);
+        static FnSignature fn = nullptr;
+
+        if (!fn)
+        {
+            fn = reinterpret_cast<FnSignature>(
+                Palworld::SignatureManager::GetSignature("UClass::CreateDefaultObject")
+            );
+        }
+
+        if (!fn)
+        {
+            PS::Log<LogLevel::Error>(STR("Failed to call UClass::CreateDefaultObject because function address was invalid.\n"));
+            return nullptr;
+        }
+
+        return fn(this);
+#else
         using FnSignature = RC::Unreal::UObject* (*)(UClass*, bool);
         static FnSignature fn = nullptr;
 
@@ -27,6 +52,7 @@ namespace UECustom {
         }
 
         return fn(this, bCreateIfNeeded);
+#endif
     }
 
     void UClassWrapper::AssembleReferenceTokenStream(bool bForce)

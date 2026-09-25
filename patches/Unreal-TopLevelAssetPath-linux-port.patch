@@ -1,0 +1,24 @@
+diff --git a/src/CoreUObject/UObject/TopLevelAssetPath.cpp b/src/CoreUObject/UObject/TopLevelAssetPath.cpp
+index 4dc554e..974fd70 100644
+--- a/src/CoreUObject/UObject/TopLevelAssetPath.cpp
++++ b/src/CoreUObject/UObject/TopLevelAssetPath.cpp
+@@ -65,6 +65,19 @@ namespace RC::Unreal
+         return FString(Builder);
+     }*/
+ 
++    void FTopLevelAssetPath::AppendString(FString& Builder) const
++    {
++        if (!IsNull())
++        {
++            Builder += PackageName.ToFString();
++            if (!AssetName.IsNone())
++            {
++                Builder += TEXT(".");
++                Builder += AssetName.ToFString();
++            }
++        }
++    }
++
+     void FTopLevelAssetPath::ToString(FString& OutString) const
+     {
+         OutString.Reset();

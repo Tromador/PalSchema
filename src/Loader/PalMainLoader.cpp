@@ -56,11 +56,15 @@ namespace Palworld {
         GetPakFoldersCallback.clear();
     }
 
-    void PalMainLoader::PreInitialize()
-    {
-        HookDatatableSerialize();
-        SetupAlternativePakPathReader();
-    }
+	void PalMainLoader::PreInitialize()
+	{
+	#ifdef __linux__
+		UnrealOffsets::InitializeGMalloc();
+	#endif
+	
+		HookDatatableSerialize();
+		SetupAlternativePakPathReader();
+	}
 
     void PalMainLoader::Initialize()
 	{

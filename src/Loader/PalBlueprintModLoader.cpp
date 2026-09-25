@@ -94,7 +94,11 @@ namespace Palworld {
             return false;
         }
 
+#ifdef __linux__
+        void* postloadPtr = Palworld::GetVirtualFunctionFromVTable(vtable, 21);
+#else
         void* postloadPtr = Palworld::GetVirtualFunctionFromVTable(vtable, 20);
+#endif
         PS::Log<LogLevel::Verbose>(TEXT("Found UBlueprintGeneratedClass::PostLoad: {}\n"), postloadPtr);
 
         PostLoadCallback = [&](UClass* actorClass) {
@@ -116,7 +120,11 @@ namespace Palworld {
             return false;
         }
 
+#ifdef __linux__
+        void* postInitCompsPtr = Palworld::GetVirtualFunctionFromVTable(vtable, 160);
+#else
         void* postInitCompsPtr = Palworld::GetVirtualFunctionFromVTable(vtable, 159);
+#endif
         PS::Log<LogLevel::Verbose>(TEXT("Found AActor::PostInitializeComponents: {}\n"), postInitCompsPtr);
 
         PostInitComponentsCallback = [&](AActor* self) {

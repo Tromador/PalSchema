@@ -72,9 +72,47 @@ void Palworld::UnrealOffsets::InitializeGMalloc()
     ZyanUSize Offset = 0;
     ZydisDecodedInstruction Instruction{};
     ZydisDecodedOperand Operands[10]{};
+
+#ifdef __linux__
+    bool MovFound = false;
+
+    while (Offset < 100 &&
+           ZYAN_SUCCESS(ZydisDecoderDecodeFull(
+               &Decoder,
+               StartAddr + Offset,
+               100 - Offset,
+               &Instruction,
+               Operands)))
+    {
+        if (Instruction.mnemonic == ZYDIS_MNEMONIC_MOV &&
+            Instruction.operand_count >= 2 &&
+            Operands[0].type == ZYDIS_OPERAND_TYPE_REGISTER &&
+            Operands[0].size == 64 &&
+            Operands[1].type == ZYDIS_OPERAND_TYPE_MEMORY &&
+            Operands[1].mem.base == ZYDIS_REGISTER_RIP &&
+            Operands[1].mem.disp.has_displacement)
+        {
+            MovFound = true;
+            break;
+        }
+
+        Offset += Instruction.length;
+    }
+
+    if (!MovFound)
+    {
+        throw std::runtime_error("Unable to locate GMalloc RIP-relative MOV in FMemory::Free.");
+    }
+#else
     bool CallFound = false;
 
-    while (ZYAN_SUCCESS(ZydisDecoderDecodeFull(&Decoder, StartAddr + Offset, 100 - Offset, &Instruction, Operands)))
+    while (Offset < 100 &&
+           ZYAN_SUCCESS(ZydisDecoderDecodeFull(
+               &Decoder,
+               StartAddr + Offset,
+               100 - Offset,
+               &Instruction,
+               Operands)))
     {
         if (CallFound)
         {
@@ -91,15 +129,20 @@ void Palworld::UnrealOffsets::InitializeGMalloc()
 
     if (Instruction.mnemonic != ZYDIS_MNEMONIC_MOV)
     {
-        throw std::runtime_error(std::format("Expected MOV instruction after CALL, but found {}", ZydisMnemonicGetString(Instruction.mnemonic)));
+        throw std::runtime_error(
+            std::format(
+                "Expected MOV instruction after CALL, but found {}",
+                ZydisMnemonicGetString(Instruction.mnemonic)));
     }
+#endif
 
     if (Instruction.operand_count < 2)
     {
         throw std::runtime_error("MOV instruction has less than 2 operands.");
     }
 
-    if (Operands[0].type != ZYDIS_OPERAND_TYPE_REGISTER || Operands[1].type != ZYDIS_OPERAND_TYPE_MEMORY)
+    if (Operands[0].type != ZYDIS_OPERAND_TYPE_REGISTER ||
+        Operands[1].type != ZYDIS_OPERAND_TYPE_MEMORY)
     {
         throw std::runtime_error("Unexpected operand types. Expected [REGISTER, MEMORY].");
     }
@@ -107,22 +150,24 @@ void Palworld::UnrealOffsets::InitializeGMalloc()
     const auto& MemOp = Operands[1].mem;
     if (MemOp.base != ZYDIS_REGISTER_RIP)
     {
-        throw std::runtime_error(std::format("Unexpected base register. Expected [RIP]."));
+        throw std::runtime_error("Unexpected base register. Expected [RIP].");
     }
 
     if (!MemOp.disp.has_displacement)
     {
-        throw std::runtime_error(std::format("RIP operand is missing displacement field."));
+        throw std::runtime_error("RIP operand is missing displacement field.");
     }
 
     uint8_t* MovInstructionAddr = StartAddr + Offset;
     uint8_t* NextInstructionAddr = MovInstructionAddr + Instruction.length;
     int64_t DispValue = MemOp.disp.value;
-    uint8_t* GMallocAddr = static_cast<uint8_t*>(NextInstructionAddr) + DispValue;
+    uint8_t* GMallocAddr = NextInstructionAddr + DispValue;
 
     RC::Unreal::GMalloc = std::bit_cast<RC::Unreal::FMalloc**>(GMallocAddr);
 
-    PS::Log<LogLevel::Verbose>(STR("Found GMalloc: {}\n"), static_cast<void*>(GMallocAddr));
+    PS::Log<LogLevel::Verbose>(
+        STR("Found GMalloc: {}\n"),
+        static_cast<void*>(GMallocAddr));
 }
 
 void Palworld::UnrealOffsets::ApplyMemberVariableLayout()
