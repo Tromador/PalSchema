@@ -637,6 +637,25 @@ namespace Palworld {
 
     bool PropertyHelper::IsPropertyA(RC::Unreal::FField* Field, RC::Unreal::FFieldClass* FieldClass)
     {
+#ifdef __linux__
+        // UE4SS's normal FField::IsA path is not available during this early
+        // initialisation stage, and Clang does not retain Unreal's inline
+        // FField::IsA as a standalone callable function. Walk the field-class
+        // hierarchy directly using the UE 5.1.1 Linux layout.
+        auto* CurrentClass = *Helper::Casting::ptr_cast<FFieldClass**>(Field, 0x08);
+
+        while (CurrentClass)
+        {
+            if (CurrentClass == FieldClass)
+            {
+                return true;
+            }
+
+            CurrentClass = *Helper::Casting::ptr_cast<FFieldClass**>(CurrentClass, 0x20);
+        }
+
+        return false;
+#else
         using IsA_Signature = bool(*)(FField*, FFieldClass*);
         static IsA_Signature IsA_Internal = nullptr;
 
@@ -654,5 +673,6 @@ namespace Palworld {
         }
 
         return IsA_Internal(Field, FieldClass);
+#endif
     }
 }

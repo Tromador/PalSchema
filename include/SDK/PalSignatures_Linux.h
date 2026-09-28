@@ -29,8 +29,9 @@ namespace Palworld::SignatureData {
         // UE4SS has StaticFindObject, but this lets us use it earlier.
         { "UObjectGlobals::StaticFindObject", "55 41 57 41 56 41 55 41 54 53 48 83 EC 28 41 89 CF 48 89 F3 49 89 FE 31 C0 48 83 FE FF 48 0F 45 C6 48 89 44 24 20 48 8D 6C 24 08 48 89 EF 48 89 D6 74 ?? E8 ?? ?? ?? ?? 48 8D 7C 24 20 48 89 EE 31 D2 31 C9 45 31 C0 45 31 C9 E8 ?? ?? ?? ?? 84 C0" },
 
-        // Uses Unreal's own FField::IsA during early initialisation because the UE4SS helper is not available yet.
-        { "FField::IsA", "48 8B 41 08 48 8B 4A 08 48 85 C9 74 08 48 85 48 10 0F 95 C0 C3" },
+        // No Linux FField::IsA signature: UE 5.1.1 defines it inline and Clang
+        // does not retain a standalone callable body. PropertyHelper::IsPropertyA
+        // uses an early-init-safe local hierarchy walk instead.
 
         // Constructs FName values during early PalSchema initialisation. Needed early.
         { "FName::Constructor", "48 89 5C 24 08 57 48 83 EC 30 48 8B D9 48 89 54 24 20" },
