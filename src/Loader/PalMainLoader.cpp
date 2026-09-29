@@ -175,7 +175,11 @@ namespace Palworld {
 
         PS::Log<LogLevel::Verbose>(STR("Fetching default object for UPalGameInstance...\n"));
         uintptr_t** PGIVTablePtr = *(uintptr_t***)PalGameInstanceClass->GetClassDefaultObject();
+#ifdef __linux__
+        void* GameInstanceInitPtr = (void*)PGIVTablePtr[92];
+#else
         void* GameInstanceInitPtr = (void*)PGIVTablePtr[90];
+#endif
         PS::Log<LogLevel::Verbose>(STR("Found UPalGameInstance::Init: {}\n"), GameInstanceInitPtr);
 
         GameInstanceInitCallbacks.push_back([&](UObject* Instance) {

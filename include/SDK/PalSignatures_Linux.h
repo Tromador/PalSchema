@@ -12,7 +12,7 @@ namespace Palworld::SignatureData {
         { "FPakPlatformFile::GetPakFolders", "41 56 53 48 83 EC 28 49 89 F6 48 8D 7C 24 18 E8 ?? ?? ?? ?? 83 7C 24 20 00 BA ?? ?? ?? ?? 74 05 48 8B 54 24 18 48 8D 7C 24 08 BE ?? ?? ?? ?? 31 C0 E8 ?? ?? ?? ?? 49 63 5E 08 8D 43 01 41 89 46 08 41 3B 46 0C" },
 
         // Important so we can easily run things on the Game Thread
-        { "AsyncTask", "48 8B C4 41 54 41 57 48 81 EC B8 00 00 00 48 89 58 08" },
+        { "AsyncTask", "55 53 48 83 EC 28 48 89 F3 89" },
 
         // Used to initialize any other loader logic like pals, items, etc
         { "AGameModeBase::InitGameState", "53 48 89 FB 48 8B 47 10 48 8B 8F F0 02 00 00 48 89 81 90 02 00 00 48 8B BF F0 02 00 00" },
@@ -34,7 +34,7 @@ namespace Palworld::SignatureData {
         // uses an early-init-safe local hierarchy walk instead.
 
         // Constructs FName values during early PalSchema initialisation. Needed early.
-        { "FName::Constructor", "48 89 5C 24 08 57 48 83 EC 30 48 8B D9 48 89 54 24 20" },
+        { "FName::Constructor", "53 48 89 F0 48 89 FB 48 85" },
 
         // Item-loader return-site target inside UPalItemContainer::ApplySaveData.
         { "UPalItemContainer::ApplySaveData", "48 89 DF E8 3D 12 00 00 48 81 C4 C0 00 00 00 5B 41 5C 41 5D 41 5E 41 5F C3" },
@@ -75,7 +75,7 @@ namespace Palworld::SignatureData {
         { "UPalItemSlot::UpdateItem_ServerInternal", "E8 ?? ?? ?? ?? 66 0F EF D2 48 8B 44 24 10 4C 63 7C 24 18 4D 85 FF 74 ?? F3 0F 6F 03 4C 89 F9 48 C1 E1 04" },
 
         // World-cleanup call target used for PalSchema lifecycle teardown.
-        { "UWorld::CleanupWorld", "E8 ?? ?? ?? ?? 8B 55 A7 FF C2 49 83 C5 08 89 55 A7" },
+        { "UWorld::CleanupWorld", "E8 ?? ?? ?? ?? 48 8B 3D 88 F2" },
 
         // Item-loader inline-hook target for applying the thread-safe player-record IntVal map.
         { "FPalPlayerRecordDataRepInfoArrayThreadSafe_IntVal::ApplyDataMap", "E8 ?? ?? ?? ?? 4C 89 EF E8 ?? ?? ?? ?? 8B 83 D0 08 00 00 41 87 85 48 31 00 00 8B 83 D4 08 00 00 41 87 85 4C 31 00 00" },

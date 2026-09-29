@@ -4,7 +4,7 @@ set(UE4SS_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/RE-UE4SS")
 set(UE4SS_SDK_BUILD_DIR "${UE4SS_SOURCE_DIR}/build-sdk")
 set(
     UE4SS_RUNTIME_LIBRARY
-    "/home/steam/PalServer/Pal/Binaries/Linux/libUE4SS.so"
+    "/home/paltest/PalServer/Pal/Binaries/Linux/libUE4SS.so"
 )
 
 if(NOT EXISTS "${UE4SS_RUNTIME_LIBRARY}")
